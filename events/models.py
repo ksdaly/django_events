@@ -66,7 +66,7 @@ class DateTime(Base):
         return self.starts_at <= datetime.fromisoformat(data['occurred_at']) <= self.ends_at
 
 class Rule(models.Model):
-    type = models.CharField(max_length=32)
+    handler_type = models.CharField(max_length=32)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     data = JSONField()
@@ -77,5 +77,5 @@ class Rule(models.Model):
     @property
     @functools.lru_cache()
     def handler(self):
-        return getattr(sys.modules[__name__], 'Quantity')(**self.data)
+        return getattr(sys.modules[__name__], self.handler_type)(**self.data)
 
