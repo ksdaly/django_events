@@ -12,4 +12,6 @@ def create(request):
     event = Event(**json.loads(request.body))
     event.save()
 
-    return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+    response_code = 200 if event.process() else 422
+
+    return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json', response_code=response_code)
