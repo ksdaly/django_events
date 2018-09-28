@@ -1,5 +1,4 @@
 import uuid
-import functools
 import sys
 
 from abc import ABC, abstractmethod
@@ -7,6 +6,7 @@ from datetime import datetime
 
 from django.db import models
 from django.contrib.postgres.fields import JSONField
+from django.utils.functional import cached_property
 
 
 class Event(models.Model):
@@ -30,6 +30,11 @@ class Base(ABC):
     @abstractmethod
     def is_eligible(self, data):
         pass
+
+    def __str__(self):
+        return ''.join(['%s: %s' % (prop, getattr(self, prop)) for prop in self.__slots__])
+
+    __repr__ = __str__
 
 class Quantity(Base):
     __slots__ = ['qty']
@@ -72,10 +77,9 @@ class Rule(models.Model):
     data = JSONField()
 
     def __str__(self):
-        return self.type
+        return self.handler_type
 
-    @property
-    @functools.lru_cache()
+    @cached_property
     def handler(self):
         return getattr(sys.modules[__name__], self.handler_type)(**self.data)
 
