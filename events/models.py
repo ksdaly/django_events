@@ -28,6 +28,6 @@ class Event(models.Model):
 
     def is_eligible(self):
         for rule in Rule.objects.all():
-            if not rule.handler.is_eligible(self.data)
+            if not rule.handler.is_eligible(self.data):
                 return False
         return True
